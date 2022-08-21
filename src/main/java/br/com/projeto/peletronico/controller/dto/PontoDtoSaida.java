@@ -6,14 +6,16 @@ import java.time.LocalTime;
 import br.com.projeto.peletronico.domain.Ponto;
 
 public class PontoDtoSaida {
-	
+
 	private LocalDate data;
 	private LocalTime horaSaida;
+	private LocalTime horaEntrada;
 	private String nomeFuncionario;
 
 	public PontoDtoSaida(Ponto ponto) {
 		this.data = ponto.getData();
-		this.horaSaida = ponto.getHoraEntrada();
+		this.horaEntrada = ponto.getHoraEntrada();
+		this.horaSaida = ponto.getHoraSaida();
 		this.nomeFuncionario = ponto.getFuncionario().getNome();
 	}
 
@@ -29,5 +31,8 @@ public class PontoDtoSaida {
 		return nomeFuncionario;
 	}
 
+	public LocalTime getHoraEntrada() {
+		return horaEntrada;
+	}
 
 }

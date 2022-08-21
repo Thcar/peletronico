@@ -31,12 +31,22 @@ import br.com.projeto.peletronico.service.PontoService;
 public class PontoController {
 	
 	private PontoService pontoService;
-	private FuncionarioService funcionarioService;;
+	private FuncionarioService funcionarioService;
 
 	public PontoController(PontoService pontoService, FuncionarioService funcionarioService) {
 		this.pontoService = pontoService;
 		this.funcionarioService = funcionarioService;
 	}
+	
+	@PostMapping("/funcionario/{idFuncionario}")
+	@Transactional
+	public ResponseEntity<Object>baterPonto(@PathVariable(value = "idFuncionario")Long idFuncionario){
+		Ponto ponto = this.pontoService.baterPonto(idFuncionario);
+		PontoDtoSaida pontoDto = new PontoDtoSaida(ponto);
+		return ResponseEntity.status(HttpStatus.OK).body(pontoDto);
+		
+	}
+	
 	
 	@PostMapping
 	@Transactional
@@ -54,6 +64,7 @@ public class PontoController {
 		Ponto ponto = optionalPonto.get();
 		InserirPontoSaidaForm inserirPontoSaidaForm = new InserirPontoSaidaForm();
 		ponto.setHoraSaida(inserirPontoSaidaForm.getHoraSaida());
+
 		return ResponseEntity.status(HttpStatus.OK).body(new PontoDtoSaida(ponto));
 		
 	}
