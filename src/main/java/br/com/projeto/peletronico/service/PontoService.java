@@ -2,11 +2,13 @@ package br.com.projeto.peletronico.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.projeto.peletronico.domain.Funcionario;
 import br.com.projeto.peletronico.domain.Ponto;
@@ -23,10 +25,6 @@ public class PontoService {
 	private FuncionarioRepository funcionarioRepository;
 	
 
-	public void assinarPontoDeEntrada(Ponto ponto) {
-		this.pontoRepository.save(ponto);
-	}
-
 	public Optional<Ponto> localizarPonto(Long id) {
 		Optional<Ponto> optionalPonto = this.pontoRepository.findById(id);
 		return optionalPonto;
@@ -36,16 +34,14 @@ public class PontoService {
 		return this.pontoRepository.localizarListaDePontos(funcionario_id);
 	}
 
+	@Transactional
 	public Ponto baterPonto(Long idFuncionario) {
 		LocalDate data = LocalDate.now();
-		LocalTime time = null;
 		Optional<Funcionario> optionalFuncionario = this.funcionarioRepository.findById(idFuncionario);
 		Funcionario funcionario = optionalFuncionario.get();
 		
 		if (optionalFuncionario.isPresent()) {
-
 			List<Ponto> pontosDeHoje = this.pontoRepository.existePontoDeEntradaHoje(idFuncionario, data);
-			List<Ponto> existePontoDeSaida = this.pontoRepository.existePontoDeSaidaHoje(idFuncionario, time);
 
 			// Salvar
 			if (pontosDeHoje.isEmpty()) {
@@ -53,35 +49,30 @@ public class PontoService {
 				ponto.setFuncionario(funcionario);
 				ponto.setData(data);
 				ponto.setHoraEntrada(LocalTime.now());
+				ponto.setAno(data.getYear());
+				ponto.setMes(data.getMonth());
 				this.pontoRepository.save(ponto);
 				return ponto;
-			}else {
+			
+			} else {
 				Ponto pontoDeEntradaMaisRecente = pontosDeHoje.get(0);
 				if (pontoDeEntradaMaisRecente.getHoraSaida() == null) {
 					pontoDeEntradaMaisRecente.setHoraSaida(LocalTime.now());
 					this.pontoRepository.save(pontoDeEntradaMaisRecente);
 					return pontoDeEntradaMaisRecente;
 					
+				} else {
+					Ponto ponto = new Ponto();
+					ponto.setFuncionario(funcionario);
+					ponto.setData(data);
+					ponto.setHoraEntrada(LocalTime.now());
+					this.pontoRepository.save(ponto);
+					ponto.setAno(data.getYear());
+					ponto.setMes(data.getMonth());
+					return ponto;
+					
 				}
 			}
-			
-			// Atualização
-//			if (existeDataDeEntrada.isPresent() && !existePontoDeSaida.isPresent()) {
-//				Ponto ponto = this.pontoRepository.localizarPonto(idFuncionario,
-//						existeDataDeEntrada.get().getHoraEntrada());
-//				ponto.setHoraSaida(LocalTime.now());
-//				this.pontoRepository.save(ponto);
-//				return ponto;
-//			}
-//			if (existeDataDeEntrada.isPresent() && existePontoDeSaida.isPresent()) {
-//				Ponto ponto = new Ponto();
-//				ponto.setFuncionario(funcionario);
-//				ponto.setData(data);
-//				ponto.setHoraEntrada(LocalTime.now());
-//				this.pontoRepository.save(ponto);
-//				return ponto;
-//			}
-//
 		}
 			throw new NotFoundException("Funcionario não existe");
 //		// Validar se usuario existe
@@ -92,6 +83,11 @@ public class PontoService {
 //		// 3 Caso haja um ponto pra hoje e pra esse funcionario, e esse ponto possui
 //		// data de entrada e saida preenchida, cria um ponto novo
 //
+	}
+
+	public List<Ponto> localizarListaDePontosPorMes(Long idFuncionario, Month mes) {
+		List<Ponto> pontos = this.pontoRepository.localizarListaDePontoNoMesEspecifico(idFuncionario, mes);
+		return pontos;
 	}
 
 }

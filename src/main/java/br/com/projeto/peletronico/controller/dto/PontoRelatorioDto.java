@@ -12,16 +12,14 @@ public class PontoRelatorioDto {
 	private LocalDate data;
 	private LocalTime horaEntrada;
 	private LocalTime horaSaida;
-	private Long diferencaEntradaSaidaHoras;
-	private Long diferencaEntradaSaidaMinutos;
+	private Long horasTrabalhadas;
 
 	public PontoRelatorioDto(Ponto ponto) {
 		this.nomeFuncionario = ponto.getFuncionario().getNome();
 		this.data = ponto.getData();
 		this.horaEntrada = ponto.getHoraEntrada();
 		this.horaSaida = ponto.getHoraSaida();
-		this.diferencaEntradaSaidaHoras = ChronoUnit.HOURS.between(ponto.getHoraEntrada(), ponto.getHoraSaida());
-		this.diferencaEntradaSaidaMinutos = ChronoUnit.MINUTES.between(ponto.getHoraEntrada(), ponto.getHoraSaida());
+		this.horasTrabalhadas = ChronoUnit.HOURS.between(ponto.getHoraEntrada(), ponto.getHoraSaida());
 	}
 
 	public String getNomeFuncionario() {
@@ -40,12 +38,8 @@ public class PontoRelatorioDto {
 		return horaSaida;
 	}
 
-	public Long getDiferencaEntradaSaidaHoras() {
-		return diferencaEntradaSaidaHoras;
-	}
-
-	public Long getDiferencaEntradaSaidaMinutos() {
-		return diferencaEntradaSaidaMinutos;
+	public Long getHorasTrabalhadas() {
+		return horasTrabalhadas;
 	}
 
 }
