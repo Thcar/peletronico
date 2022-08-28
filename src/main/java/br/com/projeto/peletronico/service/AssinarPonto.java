@@ -65,12 +65,12 @@ public class AssinarPonto {
 				break;
 
 			case 5:
-				System.out.println("Digite Primeiro Nome: ");
+				/*System.out.println("Digite Primeiro Nome: ");
 				String nomeFuncionario = scn.next();
 				Funcionario funcionario = this.funcionarioRepository.procurarPorNome(nomeFuncionario);
 				this.ponto.setFuncionario(funcionario);
 				this.pontoRepository.save(this.ponto);
-				System.out.println("Registrado.");
+				System.out.println("Registrado.");*/
 				break;
 
 			default:

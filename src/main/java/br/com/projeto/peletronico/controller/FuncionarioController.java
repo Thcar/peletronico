@@ -27,7 +27,6 @@ public class FuncionarioController {
 
 	@Autowired
 	private FuncionarioService funcionarioService;
-
 	
 	@PostMapping
 	@Transactional

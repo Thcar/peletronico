@@ -1,5 +1,6 @@
 package br.com.projeto.peletronico.controller.dto;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class InserirFuncionarioForm {

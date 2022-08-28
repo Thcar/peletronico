@@ -10,13 +10,13 @@ public class PontoDtoSaida {
 	private LocalDate data;
 	private LocalTime horaSaida;
 	private LocalTime horaEntrada;
-	private String nomeFuncionario;
+	private String nomeColaborador;
 
 	public PontoDtoSaida(Ponto ponto) {
 		this.data = ponto.getData();
 		this.horaEntrada = ponto.getHoraEntrada();
 		this.horaSaida = ponto.getHoraSaida();
-		this.nomeFuncionario = ponto.getFuncionario().getNome();
+		this.nomeColaborador = ponto.getFuncionario().getNome();
 	}
 
 	public LocalDate getData() {
@@ -27,8 +27,8 @@ public class PontoDtoSaida {
 		return horaSaida;
 	}
 
-	public String getNomeFuncionario() {
-		return nomeFuncionario;
+	public String getNomeColaborador() {
+		return nomeColaborador;
 	}
 
 	public LocalTime getHoraEntrada() {

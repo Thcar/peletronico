@@ -28,7 +28,7 @@ public class PontoController {
 	}
 	
 	@PostMapping("/funcionario/{idFuncionario}")
-	public ResponseEntity<Object>baterPonto(@PathVariable(value = "idFuncionario")Long idFuncionario){
+	public ResponseEntity<Object> baterPonto(@PathVariable(value = "idFuncionario") Long idFuncionario){
 		Ponto ponto = this.pontoService.baterPonto(idFuncionario);
 		PontoDtoSaida pontoDto = new PontoDtoSaida(ponto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(pontoDto);

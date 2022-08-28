@@ -50,8 +50,8 @@ public class CadastrarFuncionario {
 			LocalDate data = LocalDate.parse(dataString);
 			funcionario.setDataNascimento(data);
 
-			this.cargoRepository.save(funcao);
-			this.funcionarioRepository.save(funcionario);
+			/*this.cargoRepository.save(funcao);
+			this.funcionarioRepository.save(funcionario);*/
 			
 			System.out.println("1 - Continuar");
 			System.out.println("0 - Sair");
