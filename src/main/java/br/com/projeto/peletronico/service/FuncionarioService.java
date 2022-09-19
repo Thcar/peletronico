@@ -26,19 +26,21 @@ public class FuncionarioService {
 		this.cargoRepository = cargoRepository;
 		this.funcionarioRepository = funcionarioRepository;
 	}
+	
 	@Transactional
-	public Funcionario cadastrar(InserirFuncionarioForm funcionarioDto) {
+	public Funcionario cadastrar(InserirFuncionarioForm funcionarioForm) {
 		Funcionario funcionario = new Funcionario();
-		Optional<Cargo> optionalCargo = this.cargoRepository.findById(funcionarioDto.getIdCargo());
+		
+		Optional<Cargo> optionalCargo = this.cargoRepository.findById(funcionarioForm.getIdCargo());
 		funcionario.setCargo(optionalCargo.get());
 		
-		boolean existsByCpf = this.funcionarioRepository.existsByCpf(funcionarioDto.getCpf());
+		boolean existsByCpf = this.funcionarioRepository.existsByCpf(funcionarioForm.getCpf());
 		if(existsByCpf) {
 			throw new CadastrarException("Cpf já foi cadastrado");
 			
 		}
 		//funcionario.setDataNascimento(funcionarioDto.getDataNascimento());
-		BeanUtils.copyProperties(funcionarioDto, funcionario);
+		BeanUtils.copyProperties(funcionarioForm, funcionario);
 		return this.funcionarioRepository.save(funcionario);
 		
 	}
@@ -53,6 +55,7 @@ public class FuncionarioService {
 		
 	}
 	
+	@Transactional
 	public Funcionario atualizar(Long id, InserirFuncionarioForm inserirFuncionarioDto) {
 		Optional<Funcionario> optionalFuncionario = this.funcionarioRepository.findById(id);
 		Optional<Cargo> optionalCargo = this.cargoRepository.findById(inserirFuncionarioDto.getIdCargo());

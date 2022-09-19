@@ -4,6 +4,7 @@ import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +24,13 @@ public class PontoController {
 	
 	private PontoService pontoService;
 
+	@Autowired
 	public PontoController(PontoService pontoService) {
 		this.pontoService = pontoService;
 	}
 	
 	@PostMapping("/funcionario/{idFuncionario}")
-	public ResponseEntity<Object> baterPonto(@PathVariable(value = "idFuncionario") Long idFuncionario){
+	public ResponseEntity<PontoDtoSaida> baterPonto(@PathVariable(value = "idFuncionario") Long idFuncionario){
 		Ponto ponto = this.pontoService.baterPonto(idFuncionario);
 		PontoDtoSaida pontoDto = new PontoDtoSaida(ponto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(pontoDto);

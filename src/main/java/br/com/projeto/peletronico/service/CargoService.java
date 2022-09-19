@@ -5,6 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.projeto.peletronico.controller.dto.CargoForm;
@@ -18,13 +19,14 @@ public class CargoService {
 	
 	private CargoRepository cargoRepository;
 
+	@Autowired
 	public CargoService(CargoRepository cargoRepository) {
 		this.cargoRepository = cargoRepository;
 	}
 	
 	@Transactional
 	public Cargo cadastrarCargo(CargoForm cargoForm) {
-		Cargo cargo  = new Cargo();
+		Cargo cargo = new Cargo();
 		BeanUtils.copyProperties(cargoForm, cargo);
 		boolean existsByNome = this.cargoRepository.existsByNome(cargoForm.getNome());
 		if(existsByNome) {

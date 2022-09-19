@@ -22,7 +22,12 @@ public class Cargo {
 	private List<Funcionario> funcionarios = new ArrayList<>();
 
 	public void adicionarFuncionario(Funcionario funcionarios) {
+		if(funcionarios == null) {
+			throw new IllegalArgumentException("Funcionario não pode ser Nulo");
+			
+		}
 		this.funcionarios.add(funcionarios);
+		
 	}
 
 	public List<Funcionario> getFuncionarios() {

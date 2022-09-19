@@ -1,59 +1,84 @@
 package br.com.projeto.peletronico.controller;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import br.com.projeto.peletronico.controller.dto.PontoDtoSaida;
+import br.com.projeto.peletronico.controller.dto.PontoRelatorioDto;
 import br.com.projeto.peletronico.domain.Funcionario;
 import br.com.projeto.peletronico.domain.Ponto;
 import br.com.projeto.peletronico.service.PontoService;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import java.time.LocalDate;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@WebMvcTest(PontoController.class)
 class PontoControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+	private PontoController pontoController;
 
-    @MockBean
-    private PontoService pontoService;
+	@Mock
+	private PontoService pontoService;
 
-    @Test
-    @DisplayName("Dado um id de funcionario valido, ao bater ponto, deve retornar um json de ponto valido e status HTTP 201")
-    void t001() throws Exception {
+	@BeforeEach
+	void inicializacao() {
+		MockitoAnnotations.openMocks(this);
+		this.pontoController = new PontoController(this.pontoService);
 
-        //Setup:
-        Funcionario funcionario = new Funcionario();
-        funcionario.setNome("Otavio");
+	}
 
-        Ponto ponto = new Ponto();
-        ponto.setId(1L);
-        ponto.setData(LocalDate.of(2022, 10, 10));
-        ponto.setFuncionario(funcionario);
+	@Test
+	void deveriaBaterPonto() {
+		Funcionario funcionario = new Funcionario();
+		funcionario.setNome("nome1");
 
-        Mockito.when(pontoService.baterPonto(Mockito.eq(1L))).thenReturn(ponto);
+		Ponto ponto = new Ponto();
+		ponto.setFuncionario(funcionario);
 
-        int idFuncionario = 1;
-        var request = MockMvcRequestBuilders.post("/ponto/funcionario/{idFuncionario}", idFuncionario);
+		Mockito.when(this.pontoService.baterPonto(Long.parseLong("1"))).thenReturn(ponto);
 
-        //Execute:
-        var actualResult = this.mockMvc.perform(request);
+		ResponseEntity<PontoDtoSaida> baterPonto = this.pontoController.baterPonto(Long.parseLong("1"));
+		PontoDtoSaida bodyDto = baterPonto.getBody();
 
-        //Assert:
-        actualResult
-                //.andDo(MockMvcResultHandlers.print())
-                .andExpect(jsonPath("$.nomeColaborador", Matchers.is("Otavio")))
-                .andExpect(status().isCreated());
+		Assertions.assertThat(baterPonto).as("Ponto Batido e Retornado")
+				.isEqualTo(ResponseEntity.status(HttpStatus.CREATED).body(bodyDto));
 
-    }
+	}
+
+	@Test
+	void deveriaCriarRelatorioDeHorasPorFuncionario() {
+		List<Ponto> listaDePontos = listaDePontosFuncionario();
+		Mockito.when(this.pontoService.localizarListaDePontos(Long.parseLong("1"))).thenReturn(listaDePontos);
+
+		List<PontoRelatorioDto> relatorioDeHorasPorFuncionario = this.pontoController
+				.RelatorioDeHorasPorFuncionario(Long.parseLong("1"));
+
+		Assertions.assertThat(relatorioDeHorasPorFuncionario).as("Relatório de Horas Funcionario Criado")
+				.isEqualTo(relatorioDeHorasPorFuncionario);
+
+	}
+
+	private List<Ponto> listaDePontosFuncionario() {
+		Funcionario funcionario1 = new Funcionario();
+		funcionario1.setNome("nome1");
+		funcionario1.setId(Long.parseLong("1"));
+
+		Ponto ponto = new Ponto();
+		ponto.setFuncionario(funcionario1);
+		ponto.setHoraEntrada(LocalTime.now());
+		ponto.setHoraSaida(LocalTime.now().plusHours(Long.parseLong("2")));
+
+		ArrayList<Ponto> listaDePontos = new ArrayList<>();
+		listaDePontos.add(ponto);
+
+		return listaDePontos;
+
+	}
+
 }
