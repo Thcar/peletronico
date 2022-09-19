@@ -19,10 +19,14 @@ import br.com.projeto.peletronico.repository.PontoRepository;
 @Service
 public class PontoService {
 
-	@Autowired
 	private PontoRepository pontoRepository;
-	@Autowired
 	private FuncionarioRepository funcionarioRepository;
+	
+	@Autowired
+	public PontoService(PontoRepository pontoRepository,FuncionarioRepository funcionarioRepository ) {
+		this.pontoRepository = pontoRepository;
+		this.funcionarioRepository = funcionarioRepository;
+	}
 	
 
 	public Optional<Ponto> localizarPonto(Long id) {
@@ -38,10 +42,11 @@ public class PontoService {
 	public Ponto baterPonto(Long idFuncionario) {
 		LocalDate data = LocalDate.now();
 		Optional<Funcionario> optionalFuncionario = this.funcionarioRepository.findById(idFuncionario);
-		Funcionario funcionario = optionalFuncionario.get();
+		
 		
 		if (optionalFuncionario.isPresent()) {
 			List<Ponto> pontosDeHoje = this.pontoRepository.existePontoDeEntradaHoje(idFuncionario, data);
+			Funcionario funcionario = optionalFuncionario.get();
 
 			// Salvar
 			if (pontosDeHoje.isEmpty()) {
